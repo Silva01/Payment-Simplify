@@ -2,5 +2,5 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 public record ClientResponse(
         Long id,
-        String cpf
+        String identify
 ) {}

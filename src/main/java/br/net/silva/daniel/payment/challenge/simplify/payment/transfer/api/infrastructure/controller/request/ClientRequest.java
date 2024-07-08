@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public class ClientRequest extends BaseRequest {
 
-    private final String cpf;
+    private final String identify;
 
-    public ClientRequest(String email, String name, String password, String cpf) {
+    public ClientRequest(String email, String name, String password, String identify) {
         super(email, name, password);
-        this.cpf = cpf;
+        this.identify = identify;
     }
 }

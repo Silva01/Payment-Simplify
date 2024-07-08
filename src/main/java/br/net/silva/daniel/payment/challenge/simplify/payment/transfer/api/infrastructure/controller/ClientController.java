@@ -15,6 +15,6 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<ClientResponse> createClient(@RequestBody ClientRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ClientResponse(1L, request.getCpf()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ClientResponse(1L, request.getIdentify()));
     }
 }

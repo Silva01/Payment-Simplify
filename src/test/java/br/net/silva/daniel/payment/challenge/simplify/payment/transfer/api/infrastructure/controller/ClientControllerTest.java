@@ -34,6 +34,6 @@ class ClientControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.cpf").value(request.getCpf()));
+                .andExpect(jsonPath("$.identify").value(request.getIdentify()));
     }
 }
