@@ -100,9 +100,9 @@ class ClientControllerTest {
         return Stream.of(
                 new ClientRequest("", "test", "1234566", "99988877766"),
                 new ClientRequest(null, "test", "1234566", "99988877766"),
-                new ClientRequest("test@test.com", "test", "", "99988877766"),
                 new ClientRequest("test@test.com", "", "1234566", "99988877766"),
                 new ClientRequest("test@test.com", null, "1234566", "99988877766"),
+                new ClientRequest("test@test.com", "test", "", "99988877766"),
                 new ClientRequest("test@test.com", "test", null, "99988877766"),
                 new ClientRequest("test@test.com", "test", "1234566", ""),
                 new ClientRequest("test@test.com", "test", "1234566", null)
