@@ -1,16 +1,22 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.exception.ClientAlreadyExistsException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.ClientRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.ClientResponse;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.ClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +30,9 @@ class ClientControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private ClientService service;
+
     @Test
     void createClient_WithValidData_CreateClientWithSuccess() throws Exception {
         final var request = new ClientRequest(
@@ -32,6 +41,9 @@ class ClientControllerTest {
                 "Test",
                 "1234555"
         );
+
+        when(service.create(any(ClientRequest.class)))
+                .thenReturn(new ClientResponse(1L, request.getIdentify()));
 
         mockMvc.perform(post("/clients")
                 .contentType("application/json")
@@ -50,6 +62,38 @@ class ClientControllerTest {
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("$.code").value(406))
                 .andExpect(jsonPath("$.message").value("Invalid Request: Request has fields with value empty or null"));
+    }
+
+    @Test
+    void createClient_WithClientWithEmailAlreadyExists_ReturnsError409() throws Exception {
+        final var request = new ClientRequest("test@test.com", "Test", "1234555", "99988877766");
+
+        when(service.create(any(ClientRequest.class)))
+                .thenThrow(new ClientAlreadyExistsException(String.format("Invalid Request: Client with email %s already exists", request.getEmail())));
+
+
+        mockMvc.perform(post("/clients")
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(409))
+                .andExpect(jsonPath("$.message").value(String.format("Invalid Request: Client with email %s already exists", request.getEmail())));
+    }
+
+    @Test
+    void createClient_WithClientWithIdentifyAlreadyExists_ReturnsError409() throws Exception {
+        final var request = new ClientRequest("test@test.com", "Test", "1234555", "99988877766");
+
+        when(service.create(any(ClientRequest.class)))
+                .thenThrow(new ClientAlreadyExistsException(String.format("Client with Identify %s already exists", request.getIdentify())));
+
+
+        mockMvc.perform(post("/clients")
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(409))
+                .andExpect(jsonPath("$.message").value(String.format("Client with Identify %s already exists", request.getIdentify())));
     }
 
     private static Stream<ClientRequest> provideInvalidData() {
