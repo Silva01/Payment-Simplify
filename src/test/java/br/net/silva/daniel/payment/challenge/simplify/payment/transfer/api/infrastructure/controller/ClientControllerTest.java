@@ -49,7 +49,7 @@ class ClientControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.accountId").isNumber())
                 .andExpect(jsonPath("$.identify").value(request.getIdentify()));
     }
 
