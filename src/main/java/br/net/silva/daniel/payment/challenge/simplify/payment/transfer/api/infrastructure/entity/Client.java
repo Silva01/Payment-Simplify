@@ -9,7 +9,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -18,6 +21,9 @@ import lombok.Setter;
 @Entity
 @SecondaryTable(name = "client_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "client_cpf"))
 @Table(name = "client")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public final class Client {
 
     @Id
