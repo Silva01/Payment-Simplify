@@ -2,12 +2,18 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ClientDetails {
 
     @Column(unique = true, nullable = false, table = "client_details")
