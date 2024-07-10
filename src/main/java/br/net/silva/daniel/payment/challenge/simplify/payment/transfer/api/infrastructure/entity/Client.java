@@ -1,7 +1,7 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -27,10 +27,12 @@ import lombok.Setter;
 public final class Client {
 
     @Id
-    private String cpf;
+    private String id;
 
-    @Embedded
-    private ClientDetails details;
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String name;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(referencedColumnName = "client_identity")

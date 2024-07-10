@@ -18,6 +18,6 @@ public class ClientService {
 
     public ClientResponse create(ClientRequest request) throws ClientAlreadyExistsException {
         final var newClient = repository.save(ClientFactory.createClient(request));
-        return new ClientResponse(newClient.getAccount().getId(), newClient.getCpf());
+        return new ClientResponse(newClient.getAccount().getId(), newClient.getId());
     }
 }

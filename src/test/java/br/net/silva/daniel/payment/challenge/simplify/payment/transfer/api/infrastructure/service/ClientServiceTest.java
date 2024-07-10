@@ -42,9 +42,9 @@ class ClientServiceTest {
 
         final var clientSut = entityManager.find(Client.class, response.identify());
         assertThat(clientSut).isNotNull();
-        assertThat(clientSut.getCpf()).isEqualTo(request.getIdentify());
-        assertThat(clientSut.getDetails().getEmail()).isEqualTo(request.getEmail());
-        assertThat(clientSut.getDetails().getName()).isEqualTo(request.getName());
+        assertThat(clientSut.getId()).isEqualTo(request.getIdentify());
+        assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
+        assertThat(clientSut.getName()).isEqualTo(request.getName());
 
         final var accountSut = clientSut.getAccount();
         assertThat(accountSut).isNotNull();
