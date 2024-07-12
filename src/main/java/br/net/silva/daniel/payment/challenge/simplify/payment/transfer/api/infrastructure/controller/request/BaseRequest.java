@@ -18,7 +18,7 @@ public abstract class BaseRequest {
     @NotBlank(message = "Attribute password is required")
     private final String password;
 
-    protected abstract AccountType type();
+    public abstract AccountType type();
 
-    protected abstract String identify();
+    public abstract String identify();
 }
