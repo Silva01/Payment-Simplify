@@ -40,11 +40,11 @@ class ClientServiceTest {
         final var response = service.create(request);
         assertThat(response).isNotNull();
         assertThat(response.accountId()).isNotNull();
-        assertThat(response.identify()).isEqualTo(request.getIdentify());
+        assertThat(response.identify()).isEqualTo(request.identify());
 
         final var clientSut = entityManager.find(Client.class, response.identify());
         assertThat(clientSut).isNotNull();
-        assertThat(clientSut.getId()).isEqualTo(request.getIdentify());
+        assertThat(clientSut.getId()).isEqualTo(request.identify());
         assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
         assertThat(clientSut.getName()).isEqualTo(request.getName());
 
@@ -63,7 +63,7 @@ class ClientServiceTest {
                 "test@test.com",
                 "Test",
                 request.getPassword(),
-                request.getIdentify()
+                request.identify()
         );
 
         assertThatCode(() -> {
@@ -73,7 +73,7 @@ class ClientServiceTest {
         assertThatCode(() -> {
             service.create(request2);
         }).isInstanceOf(ClientAlreadyExistsException.class)
-                .hasMessage(String.format("Invalid Request: Client with CPF/CNPJ %s already exists", request2.getIdentify()));
+                .hasMessage(String.format("Invalid Request: Client with CPF/CNPJ %s already exists", request2.identify()));
     }
 
     @Test
