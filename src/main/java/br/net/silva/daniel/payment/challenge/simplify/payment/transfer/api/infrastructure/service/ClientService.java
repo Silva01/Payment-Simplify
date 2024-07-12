@@ -18,7 +18,7 @@ public class ClientService {
     }
 
     public ClientResponse create(ClientRequest request) throws ClientAlreadyExistsException {
-        validateIfAccountExists(request.getIdentify(), request.getEmail());
+        validateIfAccountExists(request.identify(), request.getEmail());
         final var newClient = repository.save(ClientFactory.createClient(request));
         return new ClientResponse(newClient.getAccount().getId(), newClient.getId());
     }

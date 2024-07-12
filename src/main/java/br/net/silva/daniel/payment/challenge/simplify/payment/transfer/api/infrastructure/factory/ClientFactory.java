@@ -1,6 +1,5 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.factory;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.ClientRequest;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.Client;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,10 @@ public final class ClientFactory {
     public static Client createClient(ClientRequest request) {
         return Client
                 .builder()
-                .id(request.getIdentify())
+                .id(request.identify())
                 .email(request.getEmail())
                 .name(request.getName())
-                .account(createAccount(request.getPassword(), request.getIdentify(), AccountType.CLIENT))
+                .account(createAccount(request.getPassword(), request.identify(), request.type()))
                 .build();
     }
 }
