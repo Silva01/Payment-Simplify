@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,4 +17,8 @@ public abstract class BaseRequest {
 
     @NotBlank(message = "Attribute password is required")
     private final String password;
+
+    protected abstract AccountType type();
+
+    protected abstract String identify();
 }
