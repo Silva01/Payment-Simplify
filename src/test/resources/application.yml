@@ -1,0 +1,5 @@
+spring.application.name: simplify-payment-transfer-api
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
