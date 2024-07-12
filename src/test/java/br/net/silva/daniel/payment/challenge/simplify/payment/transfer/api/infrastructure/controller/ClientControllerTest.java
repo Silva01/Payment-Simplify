@@ -43,14 +43,14 @@ class ClientControllerTest {
         );
 
         when(service.create(any(ClientRequest.class)))
-                .thenReturn(new ClientResponse(1L, request.getIdentify()));
+                .thenReturn(new ClientResponse(1L, request.identify()));
 
         mockMvc.perform(post("/clients")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accountId").isNumber())
-                .andExpect(jsonPath("$.identify").value(request.getIdentify()));
+                .andExpect(jsonPath("$.identify").value(request.identify()));
     }
 
     @ParameterizedTest
@@ -85,7 +85,7 @@ class ClientControllerTest {
         final var request = new ClientRequest("test@test.com", "Test", "1234555", "99988877766");
 
         when(service.create(any(ClientRequest.class)))
-                .thenThrow(new ClientAlreadyExistsException(String.format("Client with Identify %s already exists", request.getIdentify())));
+                .thenThrow(new ClientAlreadyExistsException(String.format("Client with Identify %s already exists", request.identify())));
 
 
         mockMvc.perform(post("/clients")
@@ -93,7 +93,7 @@ class ClientControllerTest {
                                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code").value(409))
-                .andExpect(jsonPath("$.message").value(String.format("Client with Identify %s already exists", request.getIdentify())));
+                .andExpect(jsonPath("$.message").value(String.format("Client with Identify %s already exists", request.identify())));
     }
 
     private static Stream<ClientRequest> provideInvalidData() {
