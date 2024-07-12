@@ -1,7 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request;
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
