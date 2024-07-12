@@ -39,7 +39,7 @@ class ClientControllerTest {
                 "00099988877",
                 "test@test.com",
                 "Test",
-                "1234555"
+                "12345555566"
         );
 
         when(service.create(any(ClientRequest.class)))
@@ -104,6 +104,8 @@ class ClientControllerTest {
                 new ClientRequest("test@test.com", null, "1234566", "99988877766"),
                 new ClientRequest("test@test.com", "test", "", "99988877766"),
                 new ClientRequest("test@test.com", "test", null, "99988877766"),
+                new ClientRequest("test@test.com", "test", null, "999888777660000"),
+                new ClientRequest("test@test.com", "test", null, "999"),
                 new ClientRequest("test@test.com", "test", "1234566", ""),
                 new ClientRequest("test@test.com", "test", "1234566", null)
         );

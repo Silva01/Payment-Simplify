@@ -39,7 +39,7 @@ class ShopkeeperControllerTest {
                 "00099988877",
                 "test@test.com",
                 "Test",
-                "1234555"
+                "12345559076655"
         );
 
         when(service.create(any(ShopkeeperRequest.class)))
@@ -66,7 +66,7 @@ class ShopkeeperControllerTest {
 
     @Test
     void createClient_WithClientWithEmailAlreadyExists_ReturnsError409() throws Exception {
-        final var request = new ShopkeeperRequest("test@test.com", "Test", "1234555", "99988877766");
+        final var request = new ShopkeeperRequest("test@test.com", "Test", "1234555", "99988877766554");
 
         when(service.create(any(ShopkeeperRequest.class)))
                 .thenThrow(new ClientAlreadyExistsException(String.format("Invalid Request: email %s already exists", request.getEmail())));
@@ -82,7 +82,7 @@ class ShopkeeperControllerTest {
 
     @Test
     void createClient_WithClientWithIdentifyAlreadyExists_ReturnsError409() throws Exception {
-        final var request = new ShopkeeperRequest("test@test.com", "Test", "1234555", "99988877766");
+        final var request = new ShopkeeperRequest("test@test.com", "Test", "1234555", "99988877766887");
 
         when(service.create(any(ShopkeeperRequest.class)))
                 .thenThrow(new ClientAlreadyExistsException(String.format("Shopkeeper with Identify %s already exists", request.identify())));
@@ -98,12 +98,14 @@ class ShopkeeperControllerTest {
 
     private static Stream<ShopkeeperRequest> provideInvalidData() {
         return Stream.of(
-                new ShopkeeperRequest("", "test", "1234566", "99988877766"),
-                new ShopkeeperRequest(null, "test", "1234566", "99988877766"),
-                new ShopkeeperRequest("test@test.com", "", "1234566", "99988877766"),
-                new ShopkeeperRequest("test@test.com", null, "1234566", "99988877766"),
-                new ShopkeeperRequest("test@test.com", "test", "", "99988877766"),
-                new ShopkeeperRequest("test@test.com", "test", null, "99988877766"),
+                new ShopkeeperRequest("", "test", "1234566", "12345559076655"),
+                new ShopkeeperRequest(null, "test", "1234566", "12345559076655"),
+                new ShopkeeperRequest("test@test.com", "", "1234566", "12345559076655"),
+                new ShopkeeperRequest("test@test.com", null, "1234566", "12345559076655"),
+                new ShopkeeperRequest("test@test.com", "test", "", "12345559076655"),
+                new ShopkeeperRequest("test@test.com", "test", null, "12345559076655"),
+                new ShopkeeperRequest("test@test.com", "test", null, "12345559072"),
+                new ShopkeeperRequest("test@test.com", "test", null, "123455590720000000"),
                 new ShopkeeperRequest("test@test.com", "test", "1234566", ""),
                 new ShopkeeperRequest("test@test.com", "test", "1234566", null)
         );
