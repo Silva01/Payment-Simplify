@@ -2,10 +2,12 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
 public class ClientRequest extends BaseRequest {
 
     @NotBlank(message = "Attribute identify is required")
+    @Getter
     private final String cpf;
 
     public ClientRequest(String email, String name, String password, String cpf) {
