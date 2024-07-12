@@ -2,11 +2,14 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 public class ClientRequest extends BaseRequest {
 
-    @NotBlank(message = "Attribute identify is required")
+    @Size(min = 11, max = 11, message = "Attribute identify must have 11 characters")
+    @NotNull
     @Getter
     private final String cpf;
 
