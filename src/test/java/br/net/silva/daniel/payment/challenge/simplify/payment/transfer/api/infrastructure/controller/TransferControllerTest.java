@@ -46,6 +46,17 @@ class TransferControllerTest extends AbstractWebTest {
                 .andExpect(jsonPath("$.message").value(String.format("Account with id %d not found", request.payer())));
     }
 
+    @Test
+    void transferValue_WithAccountPayeeNotExists_ReturnsError404() throws Exception {
+        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        when(service.transfer(request)).thenThrow(new AccountNotFoundException(String.format("Account with id %d not found", request.payee())));
+
+        postRequest(URL, request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(404))
+                .andExpect(jsonPath("$.message").value(String.format("Account with id %d not found", request.payee())));
+    }
+
     @ParameterizedTest
     @MethodSource("provideInvalidData")
     void transferValue_WithInvalidData_ReturnsError406(TransferRequest request) throws Exception {
