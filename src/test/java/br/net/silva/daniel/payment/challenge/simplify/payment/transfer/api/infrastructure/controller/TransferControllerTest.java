@@ -1,6 +1,7 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller;
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotFoundException;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountWithoutBalanceException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.AbstractWebTest;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequest;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
@@ -55,6 +56,17 @@ class TransferControllerTest extends AbstractWebTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(404))
                 .andExpect(jsonPath("$.message").value(String.format("Account with id %d not found", request.payee())));
+    }
+
+    @Test
+    void transferValue_WithAccountWithoutBalance_ReturnsError403() throws Exception {
+        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        when(service.transfer(request)).thenThrow(new AccountWithoutBalanceException(String.format("Account with id %d it's hasn't balance", request.payer())));
+
+        postRequest(URL, request)
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(403))
+                .andExpect(jsonPath("$.message").value(String.format("Account with id %d it's hasn't balance", request.payer())));
     }
 
     @ParameterizedTest
