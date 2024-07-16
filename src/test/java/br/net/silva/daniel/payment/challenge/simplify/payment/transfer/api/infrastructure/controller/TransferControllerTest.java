@@ -5,6 +5,7 @@ import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domai
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountWithoutBalanceException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.AbstractWebTest;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.TransferResponse;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,8 @@ class TransferControllerTest extends AbstractWebTest {
     @Test
     void transferValue_WithValidData_TransferWithSuccess() throws Exception {
         final var request = new TransferRequest(BigDecimal.valueOf(100.0), 4L, 15L);
+        when(service.transfer(request)).thenReturn(new TransferResponse("123456"));
+
         postRequest(URL, request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionId").isNotEmpty())
