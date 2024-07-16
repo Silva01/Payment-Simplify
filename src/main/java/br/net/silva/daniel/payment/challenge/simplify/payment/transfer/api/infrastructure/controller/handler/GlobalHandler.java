@@ -2,6 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.exception.ClientAlreadyExistsException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotFoundException;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountUnauthorizedTransactionException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountWithoutBalanceException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.ResponseError;
 import org.springframework.http.HttpHeaders;
@@ -39,5 +40,11 @@ public class GlobalHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAccountWithoutBalanceException(AccountWithoutBalanceException ex) {
         final var response = new ResponseError(HttpStatus.FORBIDDEN.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(AccountUnauthorizedTransactionException.class)
+    public ResponseEntity<Object> handleAccountUnauthorizedTransactionException(AccountUnauthorizedTransactionException ex) {
+        final var response = new ResponseError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }
