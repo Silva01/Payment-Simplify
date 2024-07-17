@@ -14,8 +14,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.math.BigDecimal;
 
-import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.ClientFakerBuilder.buildClientRequest;
-import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.ClientFakerBuilder.buildShopkeeperRequest;
+import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.FakerBuilder.ClientFaker.buildClientRequest;
+import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.FakerBuilder.ClientFaker.buildShopkeeperRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
