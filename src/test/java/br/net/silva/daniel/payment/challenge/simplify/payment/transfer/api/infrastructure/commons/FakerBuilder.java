@@ -35,8 +35,8 @@ public final class FakerBuilder {
         public static TransferRequest buildTransferRequest() {
             return new TransferRequest(
                     BigDecimal.valueOf(FAKER.number().randomDouble(2, 0, 1000)),
-                    FAKER.number().randomNumber(),
-                    FAKER.number().randomNumber()
+                    1L,
+                    2L
             );
         }
     }
