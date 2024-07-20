@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotFoundException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.Fixture;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.component.TransferRequestToEntityFactory;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.Transfer;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.FakerBuilder.TransferFaker.buildTransferRequest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @ExtendWith(MockitoExtension.class)
@@ -60,5 +62,14 @@ class TransferServiceTest {
         assertThat(transferSut.getValue()).isEqualTo(request.value());
         assertThat(transferSut.getSender().getId()).isEqualTo(request.payer());
         assertThat(transferSut.getReceiver().getId()).isEqualTo(request.payee());
+    }
+
+    @Test
+    void transferValue_WithAccountPayerNotExists_ReturnsAccountNotFoundException() {
+        final var request = buildTransferRequest();
+
+        assertThatThrownBy(() -> service.transfer(request))
+                .isInstanceOf(AccountNotFoundException.class)
+                .hasMessage(String.format("Account with id %d not found", request.payer()));
     }
 }
