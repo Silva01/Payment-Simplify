@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record TransferRequest(
+public record TransferRequestTransaction(
         @NotNull @Positive BigDecimal value,
         @NotNull Long payer,
         @NotNull Long payee

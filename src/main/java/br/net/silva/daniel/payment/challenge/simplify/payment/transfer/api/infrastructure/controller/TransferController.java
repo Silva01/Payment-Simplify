@@ -1,6 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequestTransaction;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.TransferResponse;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<TransferResponse> transfer(@RequestBody @Valid TransferRequest request) throws Exception {
+    public ResponseEntity<TransferResponse> transfer(@RequestBody @Valid TransferRequestTransaction request) throws Exception {
         return ResponseEntity.ok(service.transfer(request));
     }
 }

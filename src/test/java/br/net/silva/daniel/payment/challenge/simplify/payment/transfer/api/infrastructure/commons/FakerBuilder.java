@@ -2,7 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.ClientRequest;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.ShopkeeperRequest;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequestTransaction;
 import com.github.javafaker.Faker;
 
 import java.math.BigDecimal;
@@ -32,8 +32,8 @@ public final class FakerBuilder {
     }
 
     public static class TransferFaker {
-        public static TransferRequest buildTransferRequest() {
-            return new TransferRequest(
+        public static TransferRequestTransaction buildTransferRequest() {
+            return new TransferRequestTransaction(
                     BigDecimal.valueOf(FAKER.number().randomDouble(2, 0, 1000)),
                     1L,
                     2L

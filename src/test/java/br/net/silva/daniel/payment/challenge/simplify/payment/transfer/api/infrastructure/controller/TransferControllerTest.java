@@ -4,7 +4,7 @@ import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domai
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountUnauthorizedTransactionException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountWithoutBalanceException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.AbstractWebTest;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequestTransaction;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.TransferResponse;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @Test
     void transferValue_WithValidData_TransferWithSuccess() throws Exception {
-        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 4L, 15L);
+        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 4L, 15L);
         when(service.transfer(request)).thenReturn(new TransferResponse("123456"));
 
         postRequest(URL, request)
@@ -42,7 +42,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @Test
     void transferValue_WithAccountPayerNotExists_ReturnsError404() throws Exception {
-        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
         when(service.transfer(request)).thenThrow(new AccountNotFoundException(String.format("Account with id %d not found", request.payer())));
 
         postRequest(URL, request)
@@ -53,7 +53,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @Test
     void transferValue_WithAccountPayeeNotExists_ReturnsError404() throws Exception {
-        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
         when(service.transfer(request)).thenThrow(new AccountNotFoundException(String.format("Account with id %d not found", request.payee())));
 
         postRequest(URL, request)
@@ -64,7 +64,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @Test
     void transferValue_WithAccountWithoutBalance_ReturnsError403() throws Exception {
-        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
         when(service.transfer(request)).thenThrow(new AccountWithoutBalanceException(String.format("Account with id %d it's hasn't balance", request.payer())));
 
         postRequest(URL, request)
@@ -75,7 +75,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @Test
     void transferValue_WithAccountUnauthorizedTransaction_ReturnsError401() throws Exception {
-        final var request = new TransferRequest(BigDecimal.valueOf(100.0), 1L, 15L);
+        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
         when(service.transfer(request)).thenThrow(new AccountUnauthorizedTransactionException(String.format("Account with id %d unauthorized", request.payer())));
 
         postRequest(URL, request)
@@ -86,7 +86,7 @@ class TransferControllerTest extends AbstractWebTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidData")
-    void transferValue_WithInvalidData_ReturnsError406(TransferRequest request) throws Exception {
+    void transferValue_WithInvalidData_ReturnsError406(TransferRequestTransaction request) throws Exception {
         postRequest(URL, request)
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("$.code").value(406))
@@ -96,10 +96,10 @@ class TransferControllerTest extends AbstractWebTest {
 
     private static Stream<Arguments> provideInvalidData() {
         return Stream.of(
-                Arguments.of(new TransferRequest(null, 4L, 15L)),
-                Arguments.of(new TransferRequest(BigDecimal.ZERO, 4L, 15L)),
-                Arguments.of(new TransferRequest(BigDecimal.valueOf(100.0), null, 15L)),
-                Arguments.of(new TransferRequest(BigDecimal.valueOf(100.0), 4L, null))
+                Arguments.of(new TransferRequestTransaction(null, 4L, 15L)),
+                Arguments.of(new TransferRequestTransaction(BigDecimal.ZERO, 4L, 15L)),
+                Arguments.of(new TransferRequestTransaction(BigDecimal.valueOf(100.0), null, 15L)),
+                Arguments.of(new TransferRequestTransaction(BigDecimal.valueOf(100.0), 4L, null))
         );
     }
 }
