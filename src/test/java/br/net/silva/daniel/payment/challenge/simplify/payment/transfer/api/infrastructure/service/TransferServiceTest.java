@@ -49,9 +49,10 @@ class TransferServiceTest {
 
     @Test
     void transferValue_WithValidData_TransferWithSuccess() throws Exception {
-        final var request = buildTransferRequest();
-        fixture.createCustomAccount(request.payer());
-        fixture.createCustomAccount(request.payee());
+        final var accountPayer = fixture.createCustomAccount();
+        final var accountPayee = fixture.createCustomAccount();
+
+        final var request = buildTransferRequest(accountPayer.getId(), accountPayee.getId());
 
         final var sut = service.transfer(request);
         assertThat(sut).isNotNull();
@@ -66,10 +67,20 @@ class TransferServiceTest {
 
     @Test
     void transferValue_WithAccountPayerNotExists_ReturnsAccountNotFoundException() {
-        final var request = buildTransferRequest();
+        final var request = buildTransferRequest(200L, 201L);
 
         assertThatThrownBy(() -> service.transfer(request))
                 .isInstanceOf(AccountNotFoundException.class)
                 .hasMessage(String.format("Account with id %d not found", request.payer()));
+    }
+
+    @Test
+    void transferValue_WithAccountPayeeNotExists_ReturnsAccountNotFoundException() {
+        final var accountPayer = fixture.createCustomAccount();
+        final var request = buildTransferRequest(accountPayer.getId(), 201L);
+
+        assertThatThrownBy(() -> service.transfer(request))
+                .isInstanceOf(AccountNotFoundException.class)
+                .hasMessage(String.format("Account with id %d not found", request.payee()));
     }
 }
