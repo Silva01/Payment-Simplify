@@ -1,5 +1,7 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotAllowTransactionException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotFoundException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.Fixture;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.component.TransferRequestToEntityFactory;
@@ -49,8 +51,8 @@ class TransferServiceTest {
 
     @Test
     void transferValue_WithValidData_TransferWithSuccess() throws Exception {
-        final var accountPayer = fixture.createCustomAccount();
-        final var accountPayee = fixture.createCustomAccount();
+        final var accountPayer = fixture.createCustomAccount(AccountType.CLIENT);
+        final var accountPayee = fixture.createCustomAccount(AccountType.SHOPKEEPER);
 
         final var request = buildTransferRequest(accountPayer.getId(), accountPayee.getId());
 
@@ -76,11 +78,21 @@ class TransferServiceTest {
 
     @Test
     void transferValue_WithAccountPayeeNotExists_ReturnsAccountNotFoundException() {
-        final var accountPayer = fixture.createCustomAccount();
+        final var accountPayer = fixture.createCustomAccount(AccountType.CLIENT);
         final var request = buildTransferRequest(accountPayer.getId(), 201L);
 
         assertThatThrownBy(() -> service.transfer(request))
                 .isInstanceOf(AccountNotFoundException.class)
                 .hasMessage(String.format("Account with id %d not found", request.payee()));
+    }
+
+    @Test
+    void transferValue_WithSourceAccountPayee_ReturnsException() {
+        final var accountPayer = fixture.createCustomAccount(AccountType.SHOPKEEPER);
+        final var accountPayee = fixture.createCustomAccount(AccountType.CLIENT);
+
+        assertThatThrownBy(() -> service.transfer(buildTransferRequest(accountPayer.getId(), accountPayee.getId())))
+                .isInstanceOf(AccountNotAllowTransactionException.class)
+                .hasMessage(String.format("Account with id %d not allow make transfer", accountPayer.getId()));
     }
 }
