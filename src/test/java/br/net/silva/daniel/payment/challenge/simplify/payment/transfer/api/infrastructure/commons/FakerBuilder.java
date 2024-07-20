@@ -32,11 +32,11 @@ public final class FakerBuilder {
     }
 
     public static class TransferFaker {
-        public static TransferRequestTransaction buildTransferRequest() {
+        public static TransferRequestTransaction buildTransferRequest(Long payerAccountId, Long payeeAccountId) {
             return new TransferRequestTransaction(
                     BigDecimal.valueOf(FAKER.number().randomDouble(2, 0, 1000)),
-                    1L,
-                    2L
+                    payerAccountId,
+                    payeeAccountId
             );
         }
     }

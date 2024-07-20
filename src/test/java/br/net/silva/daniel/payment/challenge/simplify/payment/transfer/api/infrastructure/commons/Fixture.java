@@ -20,26 +20,26 @@ public class Fixture {
     private final ClientRepository clientRepository;
     private final AccountRepository accountRepository;
 
-    public void createCustomAccount(Long accountId) {
+    public AccountModel createCustomAccount() {
         final var request = buildClientRequest();
         final var newCLient = createCustomAccount(request);
-        final var newAccount = createCUstomAccount(accountId, newCLient, request);
+        final var newAccount = createCustomAccount(newCLient, request);
 
         newCLient.setAccountModel(newAccount);
-        accountRepository.save(newAccount);
+        final var responseAccount = accountRepository.save(newAccount);
         clientRepository.save(newCLient);
+
+        return responseAccount;
     }
 
-    public AccountModel createCUstomAccount(Long accountId, Client newCLient, ClientRequest request) {
-        final var newAccount = AccountModel
+    public AccountModel createCustomAccount(Client newCLient, ClientRequest request) {
+        return AccountModel
                 .builder()
-                .id(accountId)
                 .balance(BigDecimal.valueOf(1000))
                 .type(AccountType.CLIENT)
                 .clientIdentity(newCLient.getId())
                 .password(request.getPassword())
                 .build();
-        return newAccount;
     }
 
     public Client createCustomAccount(ClientRequest request) {
