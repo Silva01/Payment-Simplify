@@ -33,5 +33,5 @@ public final class Client {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(referencedColumnName = "client_identity")
-    private Account account;
+    private AccountModel accountModel;
 }

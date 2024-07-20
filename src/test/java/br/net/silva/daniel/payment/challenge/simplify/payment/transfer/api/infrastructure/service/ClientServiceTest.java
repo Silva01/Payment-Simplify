@@ -50,7 +50,7 @@ class ClientServiceTest {
         assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
         assertThat(clientSut.getName()).isEqualTo(request.getName());
 
-        final var accountSut = clientSut.getAccount();
+        final var accountSut = clientSut.getAccountModel();
         assertThat(accountSut).isNotNull();
         assertThat(accountSut.getId()).isNotNull();
         assertThat(accountSut.getType()).isEqualTo(AccountType.CLIENT);
@@ -113,7 +113,7 @@ class ClientServiceTest {
         assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
         assertThat(clientSut.getName()).isEqualTo(request.getName());
 
-        final var accountSut = clientSut.getAccount();
+        final var accountSut = clientSut.getAccountModel();
         assertThat(accountSut).isNotNull();
         assertThat(accountSut.getId()).isNotNull();
         assertThat(accountSut.getType()).isEqualTo(AccountType.SHOPKEEPER);

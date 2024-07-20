@@ -2,7 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.client.enuns.AccountType;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.ClientRequest;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.Account;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.AccountModel;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.Client;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.repository.AccountRepository;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.entity.repository.ClientRepository;
@@ -25,13 +25,13 @@ public class Fixture {
         final var newCLient = createCustomAccount(request);
         final var newAccount = createCUstomAccount(accountId, newCLient, request);
 
-        newCLient.setAccount(newAccount);
+        newCLient.setAccountModel(newAccount);
         accountRepository.save(newAccount);
         clientRepository.save(newCLient);
     }
 
-    public Account createCUstomAccount(Long accountId, Client newCLient, ClientRequest request) {
-        final var newAccount = Account
+    public AccountModel createCUstomAccount(Long accountId, Client newCLient, ClientRequest request) {
+        final var newAccount = AccountModel
                 .builder()
                 .id(accountId)
                 .balance(BigDecimal.valueOf(1000))

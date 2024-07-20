@@ -16,7 +16,7 @@ public final class ClientFactory {
                 .id(request.identify())
                 .email(request.getEmail())
                 .name(request.getName())
-                .account(createAccount(request.getPassword(), request.identify(), request.type()))
+                .accountModel(createAccount(request.getPassword(), request.identify(), request.type()))
                 .build();
     }
 }

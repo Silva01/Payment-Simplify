@@ -33,11 +33,11 @@ public class Transfer {
 
     @OneToOne
     @JoinColumn(name = "account_sender", referencedColumnName = "id", updatable = false, insertable = false)
-    private Account sender;
+    private AccountModel sender;
 
     @OneToOne
     @JoinColumn(name = "account_receiver", referencedColumnName = "id", updatable = false, insertable = false)
-    private Account receiver;
+    private AccountModel receiver;
 
     @Column(name = "amount")
     private BigDecimal value;
