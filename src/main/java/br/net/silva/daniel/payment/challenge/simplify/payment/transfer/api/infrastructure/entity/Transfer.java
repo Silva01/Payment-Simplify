@@ -45,7 +45,7 @@ public class Transfer {
     @Column(name = "operation_date")
     private LocalDateTime operationDate;
 
-    @Column(name = "idempotency_id")
+    @Column(name = "idempotency_id", unique = true, nullable = false)
     private String idempotencyId;
 
     private StatusTransfer status;
