@@ -14,8 +14,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.math.BigDecimal;
 
-import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.ClientFakerBuilder.buildClientRequest;
-import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.ClientFakerBuilder.buildShopkeeperRequest;
+import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.FakerBuilder.ClientFaker.buildClientRequest;
+import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.FakerBuilder.ClientFaker.buildShopkeeperRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -50,7 +50,7 @@ class ClientServiceTest {
         assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
         assertThat(clientSut.getName()).isEqualTo(request.getName());
 
-        final var accountSut = clientSut.getAccount();
+        final var accountSut = clientSut.getAccountModel();
         assertThat(accountSut).isNotNull();
         assertThat(accountSut.getId()).isNotNull();
         assertThat(accountSut.getType()).isEqualTo(AccountType.CLIENT);
@@ -113,7 +113,7 @@ class ClientServiceTest {
         assertThat(clientSut.getEmail()).isEqualTo(request.getEmail());
         assertThat(clientSut.getName()).isEqualTo(request.getName());
 
-        final var accountSut = clientSut.getAccount();
+        final var accountSut = clientSut.getAccountModel();
         assertThat(accountSut).isNotNull();
         assertThat(accountSut.getId()).isNotNull();
         assertThat(accountSut.getType()).isEqualTo(AccountType.SHOPKEEPER);

@@ -30,7 +30,7 @@ public class ClientService {
     public ClientResponse createClient(BaseRequest request) throws ClientAlreadyExistsException {
         validateIfAccountExists(request.identify(), request.getEmail());
         final var newClient = repository.save(ClientFactory.createClient(request));
-        return new ClientResponse(newClient.getAccount().getId(), newClient.getId());
+        return new ClientResponse(newClient.getAccountModel().getId(), newClient.getId());
     }
 
     public void validateIfAccountExists(String identify, String email) throws ClientAlreadyExistsException {
