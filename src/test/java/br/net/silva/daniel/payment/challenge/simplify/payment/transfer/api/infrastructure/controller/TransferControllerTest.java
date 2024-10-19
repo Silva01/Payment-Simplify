@@ -1,105 +1,102 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountNotFoundException;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountUnauthorizedTransactionException;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.exception.AccountWithoutBalanceException;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.commons.AbstractWebTest;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.request.TransferRequestTransaction;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.controller.response.TransferResponse;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.BadTransferException;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.TransferRequest;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.TransferService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.util.stream.Stream;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TransferController.class)
-class TransferControllerTest extends AbstractWebTest {
+@ExtendWith(MockitoExtension.class)
+class TransferControllerTest {
 
-    private static final String URL = "/transfer";
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private TransferService service;
 
     @Test
-    void transferValue_WithValidData_TransferWithSuccess() throws Exception {
-        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 4L, 15L);
-        when(service.transfer(request)).thenReturn(new TransferResponse("123456"));
+    @DisplayName("Transferencia basica com sucesso")
+    void transferValue_WithValidData_TransferFinishedWithSuccess() throws Exception {
+        // Arrange
+        final var request = new TransferRequest(BigDecimal.valueOf(1000), 1, 2);
 
-        postRequest(URL, request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.transactionId").isNotEmpty())
-                .andExpect(jsonPath("$.transactionId").isString());
+        // Act
+        mockMvc.perform(post("/transfer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void transferValue_WithAccountPayerNotExists_ReturnsError404() throws Exception {
-        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
-        when(service.transfer(request)).thenThrow(new AccountNotFoundException(String.format("Account with id %d not found", request.payer())));
+    void transferValue_WithoutBalance_ReturnsStatus403() throws Exception {
+        // Arrange
+        final var request = new TransferRequest(BigDecimal.valueOf(1000), 1, 2);
 
-        postRequest(URL, request)
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value(String.format("Account with id %d not found", request.payer())));
-    }
+        doThrow(new BadTransferException("Saldo insuficiente", HttpStatus.FORBIDDEN.value()))
+                .when(service).transferValue(any(TransferRequest.class));
 
-    @Test
-    void transferValue_WithAccountPayeeNotExists_ReturnsError404() throws Exception {
-        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
-        when(service.transfer(request)).thenThrow(new AccountNotFoundException(String.format("Account with id %d not found", request.payee())));
-
-        postRequest(URL, request)
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value(String.format("Account with id %d not found", request.payee())));
-    }
-
-    @Test
-    void transferValue_WithAccountWithoutBalance_ReturnsError403() throws Exception {
-        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
-        when(service.transfer(request)).thenThrow(new AccountWithoutBalanceException(String.format("Account with id %d it's hasn't balance", request.payer())));
-
-        postRequest(URL, request)
+        // Act
+        mockMvc.perform(post("/transfer")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.code").value(403))
-                .andExpect(jsonPath("$.message").value(String.format("Account with id %d it's hasn't balance", request.payer())));
+                .andExpect(jsonPath("$.message").value("Saldo insuficiente"))
+                .andExpect(jsonPath("$.status").value(403));
     }
 
     @Test
-    void transferValue_WithAccountUnauthorizedTransaction_ReturnsError401() throws Exception {
-        final var request = new TransferRequestTransaction(BigDecimal.valueOf(100.0), 1L, 15L);
-        when(service.transfer(request)).thenThrow(new AccountUnauthorizedTransactionException(String.format("Account with id %d unauthorized", request.payer())));
+    void transferValue_WithoutClient_ReturnsStatus404() throws Exception {
+        // Arrange
+        final var request = new TransferRequest(BigDecimal.valueOf(1000), 1, 2);
 
-        postRequest(URL, request)
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.code").value(401))
-                .andExpect(jsonPath("$.message").value(String.format("Account with id %d unauthorized", request.payer())));
+        doThrow(new BadTransferException("Cliente nao encontrado", HttpStatus.NOT_FOUND.value()))
+                .when(service).transferValue(any(TransferRequest.class));
+
+        // Act
+        mockMvc.perform(post("/transfer")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Cliente nao encontrado"))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
-    @ParameterizedTest
-    @MethodSource("provideInvalidData")
-    void transferValue_WithInvalidData_ReturnsError406(TransferRequestTransaction request) throws Exception {
-        postRequest(URL, request)
-                .andExpect(status().isNotAcceptable())
-                .andExpect(jsonPath("$.code").value(406))
-                .andExpect(jsonPath("$.message").value("Invalid Request: Request has fields with value empty or null"));
+    @Test
+    void transferValue_RetalierToClient_ReturnsStatus400() throws Exception {
+        // Arrange
+        final var request = new TransferRequest(BigDecimal.valueOf(1000), 1, 2);
 
-    }
+        doThrow(new BadTransferException("Logista não tem permissão para transferir valor", HttpStatus.BAD_REQUEST.value()))
+                .when(service).transferValue(any(TransferRequest.class));
 
-    private static Stream<Arguments> provideInvalidData() {
-        return Stream.of(
-                Arguments.of(new TransferRequestTransaction(null, 4L, 15L)),
-                Arguments.of(new TransferRequestTransaction(BigDecimal.ZERO, 4L, 15L)),
-                Arguments.of(new TransferRequestTransaction(BigDecimal.valueOf(100.0), null, 15L)),
-                Arguments.of(new TransferRequestTransaction(BigDecimal.valueOf(100.0), 4L, null))
-        );
+        // Act
+        mockMvc.perform(post("/transfer")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Logista não tem permissão para transferir valor"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 }
