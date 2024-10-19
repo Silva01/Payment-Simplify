@@ -18,8 +18,8 @@ public class CommandInvoker {
         return this;
     }
 
-    public List<CommandResponse> start() throws BadTransferException {
-        final List<CommandResponse> responses = new ArrayList<>();
+    public CommandsResponse start() throws BadTransferException {
+        final var responses = new CommandsResponse();
         for (Command command : commands) {
             responses.add(command.execute());
         }
