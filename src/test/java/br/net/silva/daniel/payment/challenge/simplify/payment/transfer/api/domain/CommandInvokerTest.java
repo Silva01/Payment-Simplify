@@ -11,34 +11,36 @@ class CommandInvokerTest {
     @Test
     void executionCommand_WithoutErrors() throws BadTransferException {
         // Arrange
-        final var command = new Command<String>() {
+        final var command = new Command() {
             @Override
-            public String execute() {
-                return "Hello World!";
+            public CommandResponse execute() {
+                return new CommandResponse("Hello World!");
             }
         };
 
         // Act
-        final var result = CommandInvoker.of(command)
+        final var result = new CommandInvoker().add(command)
                 .start();
 
         // Assert
-        assertThat(result).isEqualTo("Hello World!");
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).response(String.class)).isEqualTo("Hello World!");
     }
 
     @Test
     void executionCommand_WithErrors() throws BadTransferException {
         // Arrange
-        final var command = new Command<String>() {
+        final var command = new Command() {
             @Override
-            public String execute() {
+            public CommandResponse execute() {
                 var num = 1 / 0;
-                return "Hello World!";
+                return new CommandResponse("Hello World!");
             }
         };
 
         // Act
-        assertThatThrownBy(() -> CommandInvoker.of(command).start())
+        assertThatThrownBy(() -> new CommandInvoker().add(command).start())
                 .isInstanceOf(ArithmeticException.class);
     }
 }
