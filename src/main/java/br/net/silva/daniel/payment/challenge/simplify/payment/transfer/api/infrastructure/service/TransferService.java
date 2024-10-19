@@ -1,4 +1,4 @@
-package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure;
+package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service;
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.BadTransferException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.TransferRequest;

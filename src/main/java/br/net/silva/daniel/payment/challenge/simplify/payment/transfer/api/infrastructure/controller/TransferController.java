@@ -2,7 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infr
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.BadTransferException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.TransferRequest;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.TransferService;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.infrastructure.service.TransferService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
