@@ -81,7 +81,7 @@ class CommandInvokerTest {
     @Test
     void executionCommand_ProcessCreatedWithFactory_WithoutErrors() throws BadTransferException {
         // Arrange
-        final var commandFactory = new GroupCommandFactory() {
+        final var commandFactory = new CompositeCommandFactory() {
             @Override
             public List<Command> create() {
                 return List.of(

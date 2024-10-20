@@ -2,6 +2,6 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.doma
 
 import java.util.List;
 
-public interface GroupCommandFactory {
+public interface CompositeCommandFactory {
     List<Command> create();
 }

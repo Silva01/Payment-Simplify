@@ -22,7 +22,7 @@ public class CommandInvoker {
         return this;
     }
 
-    public CommandInvoker add(GroupCommandFactory commandFactory) {
+    public CommandInvoker add(CompositeCommandFactory commandFactory) {
         commands.addAll(commandFactory.create());
         return this;
     }
