@@ -39,9 +39,15 @@ class AccountTest {
         final var simpleAccount = Account
                 .createSimpleAccount("12345600099", "Daniel", "teste@teste", "123");
 
+        final var retailerAccount = Account
+                .createRetailerAccount("12345600099", "Daniel", "teste@teste", "123");
+
         final var valueForTransfer = BigDecimal.valueOf(500);
 
         assertThatCode(() -> simpleAccount.validateAccountBalance(valueForTransfer))
+                .doesNotThrowAnyException();
+
+        assertThatCode(() -> retailerAccount.validateAccountBalance(valueForTransfer))
                 .doesNotThrowAnyException();
     }
 
@@ -50,9 +56,16 @@ class AccountTest {
         final var simpleAccount = Account
                 .createSimpleAccount("12345600099", "Daniel", "teste@teste", "123");
 
+        final var retailerAccount = Account
+                .createRetailerAccount("12345600099", "Daniel", "teste@teste", "123");
+
         final var valueForTransfer = BigDecimal.valueOf(2000);
 
         assertThatThrownBy(() -> simpleAccount.validateAccountBalance(valueForTransfer))
+                .isInstanceOf(BadTransferException.class)
+                .hasMessage("Balance insufficient for transfer");
+
+        assertThatThrownBy(() -> retailerAccount.validateAccountBalance(valueForTransfer))
                 .isInstanceOf(BadTransferException.class)
                 .hasMessage("Balance insufficient for transfer");
     }
