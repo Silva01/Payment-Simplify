@@ -3,6 +3,8 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.doma
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.BadTransferException;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.CommandResponseFluxEnum.EXTRACT;
 import static br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.CommandResponseFluxEnum.TRANSFER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +33,7 @@ class CommandInvokerTest {
     }
 
     @Test
-    void executionCommand_ProcessWitmMoreTwoResponse_WithoutErrors() throws BadTransferException {
+    void executionCommand_ProcessWithMoreTwoResponse_WithoutErrors() throws BadTransferException {
         // Arrange
         final var command1 = new Command() {
             @Override
@@ -74,5 +76,39 @@ class CommandInvokerTest {
         // Act
         assertThatThrownBy(() -> new CommandInvoker().add(command).start())
                 .isInstanceOf(ArithmeticException.class);
+    }
+
+    @Test
+    void executionCommand_ProcessCreatedWithFactory_WithoutErrors() throws BadTransferException {
+        // Arrange
+        final var commandFactory = new GroupCommandFactory() {
+            @Override
+            public List<Command> create() {
+                return List.of(
+                        new Command() {
+                            @Override
+                            public CommandResponse execute() {
+                                return new CommandResponse("Hello World!", TRANSFER);
+                            }
+                        },
+                        new Command() {
+                            @Override
+                            public CommandResponse execute() {
+                                return new CommandResponse(999, EXTRACT);
+                            }
+                        }
+                );
+            }
+        };
+
+        final var commandInvoker = new CommandInvoker().add(commandFactory);
+        // Act
+        final var result = commandInvoker.start();
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.responses()).hasSize(2);
+        assertThat(result.getResponseForFlux(TRANSFER).response(String.class)).isEqualTo("Hello World!");
+        assertThat(result.getResponseForFlux(EXTRACT).response(Integer.class)).isEqualTo(999);
     }
 }
