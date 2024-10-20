@@ -35,4 +35,8 @@ public class Account implements Aggregate {
             throw new BadTransferException("Balance insufficient for transfer", HttpStatus.FORBIDDEN.value());
         }
     }
+
+    public boolean isRetailer() {
+        return RETAILER_ACCOUNT.equals(type);
+    }
 }
