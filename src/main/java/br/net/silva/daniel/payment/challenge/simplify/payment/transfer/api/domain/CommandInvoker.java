@@ -13,8 +13,17 @@ public class CommandInvoker {
         this.commands = new ArrayList<>();
     }
 
+    public static CommandInvoker of() {
+        return new CommandInvoker();
+    }
+
     public CommandInvoker add(Command command) {
         commands.add(command);
+        return this;
+    }
+
+    public CommandInvoker add(GroupCommandFactory commandFactory) {
+        commands.addAll(commandFactory.create());
         return this;
     }
 
