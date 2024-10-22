@@ -27,12 +27,9 @@ public class CommandInvoker {
         return this;
     }
 
-    public CommandsResponse start() throws BadTransferException {
-        final var responses = new CommandsResponse();
+    public void start() throws BadTransferException {
         for (Command command : commands) {
-            responses.add(command.execute());
+            command.execute();
         }
-
-        return responses;
     }
 }
