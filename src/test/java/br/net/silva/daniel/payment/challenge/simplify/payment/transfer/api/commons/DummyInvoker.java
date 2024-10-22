@@ -2,7 +2,6 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.comm
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.Command;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.CommandInvoker;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.CommandsResponse;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.domain.transfer.BadTransferException;
 
 public class DummyInvoker extends CommandInvoker {
@@ -16,7 +15,7 @@ public class DummyInvoker extends CommandInvoker {
     }
 
     @Override
-    public CommandsResponse start() throws BadTransferException {
+    public void start() throws BadTransferException {
         throw new BadTransferException("Invalid transfer", 400);
     }
 }
