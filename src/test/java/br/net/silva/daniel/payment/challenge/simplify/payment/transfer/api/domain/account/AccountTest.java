@@ -76,4 +76,21 @@ class AccountTest implements UserMockGenerator {
 
         assertThat(simpleAccount.isRetailer()).isTrue();
     }
+
+    @Test
+    void validateIfAccountExists_AccountExists_NotReturnException() {
+        final var simpleAccount = createSimpleAccount();
+
+        assertThatCode(simpleAccount::exists)
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void validateIfAccountExists_AccountNotExists_ReturnException() {
+        final var simpleAccount = createNotFoundAccount();
+
+        assertThatThrownBy(simpleAccount::exists)
+                .isInstanceOf(BadTransferException.class)
+                .hasMessage("Account not found");
+    }
 }

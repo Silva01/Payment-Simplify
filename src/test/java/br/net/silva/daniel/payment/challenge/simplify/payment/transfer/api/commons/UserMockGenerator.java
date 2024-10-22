@@ -26,4 +26,9 @@ public interface UserMockGenerator {
         return Account
                 .createRetailerAccount("12345600099", "Daniel", "teste@teste", "123");
     }
+
+    default Account createNotFoundAccount() {
+        return Account
+                .accountNotFound();
+    }
 }
