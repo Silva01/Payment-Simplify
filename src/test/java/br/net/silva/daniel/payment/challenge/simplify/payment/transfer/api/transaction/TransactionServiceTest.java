@@ -6,7 +6,6 @@ import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.walle
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,7 +18,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,9 +38,12 @@ class TransactionServiceTest {
     @Mock
     private ValidateIfCommonUser validateIfCommonUser;
 
+    @Mock
+    private ValidateIfTransferHimself validateIfTransferHimself;
+
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(service, "transactionValidates", List.of(validateIfCommonUser));
+        ReflectionTestUtils.setField(service, "transactionValidates", List.of(validateIfCommonUser, validateIfTransferHimself));
     }
 
     @Test
@@ -68,5 +69,23 @@ class TransactionServiceTest {
 
         verify(walletService, times(1)).findById(request.getPayer());
         verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
+    }
+
+    @Test
+    void createTransaction_ToTransferToHimself_MakeWithError() {
+        final var request = new TransactionRequest(2L, 1L, BigDecimal.valueOf(1000));
+        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", WalletTypeEnum.LOJISTA);
+
+        when(walletService.findById(request.getPayer())).thenReturn(Optional.of(walletLojista));
+        doThrow(new TransactionNotAllowsException("Payer cannot transfer to himself"))
+                .when(validateIfTransferHimself).validate(any(TransactionRequest.class), any(Wallet.class));
+
+        assertThatThrownBy(() -> service.createTransferTransaction(request))
+                .isInstanceOf(TransactionNotAllowsException.class)
+                .hasMessage("Payer cannot transfer to himself");
+
+        verify(walletService, times(1)).findById(request.getPayer());
+        verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
+        verify(validateIfTransferHimself, times(1)).validate(request, walletLojista);
     }
 }
