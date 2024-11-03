@@ -19,4 +19,11 @@ public record Wallet(
         BigDecimal balance,
         @Enumerated(EnumType.ORDINAL) WalletTypeEnum type
 ) {
+    public Wallet debit(BigDecimal value) {
+        return new Wallet(id, name, cpf, email, password, balance.subtract(value), type);
+    }
+
+    public Wallet credit(BigDecimal value) {
+        return new Wallet(id, name, cpf, email, password, balance.add(value), type);
+    }
 }
