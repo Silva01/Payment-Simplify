@@ -41,14 +41,21 @@ class TransactionServiceTest {
     @Mock
     private ValidateIfTransferHimself validateIfTransferHimself;
 
+    @Mock
+    private ValidateIfHasBalance validateIfHasBalance;
+
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(service, "transactionValidates", List.of(validateIfCommonUser, validateIfTransferHimself));
+        ReflectionTestUtils.setField(service, "transactionValidates",
+                                     List.of(validateIfCommonUser, validateIfTransferHimself, validateIfHasBalance));
     }
 
     @Test
     void createTransaction_ToTransferWithValidData_MakeWithSuccess() {
         final var transaction = new TransactionRequest(1L, 2L, BigDecimal.valueOf(1000));
+        final var walletCommom = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.COMUM);
+
+        when(walletService.findById(transaction.getPayer())).thenReturn(Optional.of(walletCommom));
 
         assertThatCode(() -> service.createTransferTransaction(transaction))
                 .doesNotThrowAnyException();
@@ -57,7 +64,7 @@ class TransactionServiceTest {
     @Test
     void createTransaction_ToTransferLojistaToCommonUser_MakeWithError() {
         final var request = new TransactionRequest(2L, 1L, BigDecimal.valueOf(1000));
-        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", WalletTypeEnum.LOJISTA);
+        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.LOJISTA);
 
         when(walletService.findById(request.getPayer())).thenReturn(Optional.of(walletLojista));
         doThrow(new TransactionNotAllowsException("Payer type is not allowed to make transfers"))
@@ -74,7 +81,7 @@ class TransactionServiceTest {
     @Test
     void createTransaction_ToTransferToHimself_MakeWithError() {
         final var request = new TransactionRequest(2L, 1L, BigDecimal.valueOf(1000));
-        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", WalletTypeEnum.LOJISTA);
+        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.COMUM);
 
         when(walletService.findById(request.getPayer())).thenReturn(Optional.of(walletLojista));
         doThrow(new TransactionNotAllowsException("Payer cannot transfer to himself"))
@@ -87,5 +94,24 @@ class TransactionServiceTest {
         verify(walletService, times(1)).findById(request.getPayer());
         verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
         verify(validateIfTransferHimself, times(1)).validate(request, walletLojista);
+    }
+
+    @Test
+    void createTransaction_ToTransferWithoutBalance_MakeWithError() {
+        final var request = new TransactionRequest(2L, 1L, BigDecimal.valueOf(1000));
+        final var walletLojista = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.COMUM);
+
+        when(walletService.findById(request.getPayer())).thenReturn(Optional.of(walletLojista));
+        doThrow(new TransactionNotAllowsException("Payer does not have enough balance to make the transfer"))
+                .when(validateIfHasBalance).validate(any(TransactionRequest.class), any(Wallet.class));
+
+        assertThatThrownBy(() -> service.createTransferTransaction(request))
+                .isInstanceOf(TransactionNotAllowsException.class)
+                .hasMessage("Payer does not have enough balance to make the transfer");
+
+        verify(walletService, times(1)).findById(request.getPayer());
+        verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
+        verify(validateIfTransferHimself, times(1)).validate(request, walletLojista);
+        verify(validateIfHasBalance, times(1)).validate(request, walletLojista);
     }
 }

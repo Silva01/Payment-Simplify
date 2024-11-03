@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
+
 @Table(name = "WALLETS")
 public record Wallet(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id,
@@ -14,6 +16,7 @@ public record Wallet(
         String cpf,
         String email,
         String password,
+        BigDecimal balance,
         @Enumerated(EnumType.ORDINAL) WalletTypeEnum type
 ) {
 }
