@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 
+@Entity
 @Table(name = "WALLETS")
 public record Wallet(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id,

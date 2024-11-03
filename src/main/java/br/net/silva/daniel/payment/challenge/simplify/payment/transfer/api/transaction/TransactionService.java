@@ -13,19 +13,19 @@ public class TransactionService {
 
     private final WalletService walletService;
     private final List<TransactionValidate> transactionValidates;
+    private final TransactionRepository repository;
 
     @Transactional
     public void createTransferTransaction(TransactionRequest request) throws TransactionNotAllowsException {
         // 1 - validar a transação
-        final var payerWallet = walletService.findById(request.getPayer())
-                .orElseThrow(() -> new TransactionNotAllowsException("Payer not found"));
-
+        final var payerWallet = walletService.findById(request.getPayer());
         transactionValidates.forEach(validate -> validate.validate(request, payerWallet));
 
         // 2 - Debitar o valor da carteira do pagador
         walletService.debitingAndCrediting(request);
-        // 4 - Salvar a transação
 
+        // 4 - Salvar a transação
+        repository.save(Transaction.of(request));
 
         // 5 - Enviar notificação para o recebedor
     }
