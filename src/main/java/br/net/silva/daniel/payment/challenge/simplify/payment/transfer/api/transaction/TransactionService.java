@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class TransactionService {
     private final WalletService walletService;
     private final List<TransactionValidate> transactionValidates;
     private final TransactionRepository repository;
+    private final AuthorizationService authorizationService;
 
     @Transactional
     public void createTransferTransaction(TransactionRequest request) throws TransactionNotAllowsException {
@@ -27,6 +29,9 @@ public class TransactionService {
         // 4 - Salvar a transação
         repository.save(Transaction.of(request));
 
-        // 5 - Enviar notificação para o recebedor
+        // 5 - Acessar servico autorizador
+        authorizationService.authorizateTransaction();
+
+        // 6 - Enviar notificação para o recebedor
     }
 }

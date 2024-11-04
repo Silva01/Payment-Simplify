@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,5 +93,21 @@ class TransactionControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Payer without balance to make transfers"))
                 .andExpect(jsonPath("$.cod").value(400));
+    }
+
+    @Test
+    void createTransferTransaction_WithAutorizationServiceNotAuthorizated_ReturnsStatus401() throws Exception {
+
+        final var request = new TransactionRequest(1L, 2L, BigDecimal.valueOf(100));
+
+        doThrow(new AuthorizationException("Transaction not authorized for service authorization"))
+                .when(service).createTransferTransaction(any(TransactionRequest.class));
+
+        mockMvc.perform(post("/transaction")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Transaction not authorized for service authorization"))
+                .andExpect(jsonPath("$.cod").value(401));
     }
 }

@@ -1,5 +1,7 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.Wallet;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletService;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletTypeEnum;
@@ -48,6 +50,9 @@ class TransactionServiceTest {
 
     @Mock
     private TransactionRepository repository;
+
+    @Mock
+    private AuthorizationService authorizationService;
 
     @Captor
     private ArgumentCaptor<Transaction> transactionCaptor;
@@ -135,5 +140,34 @@ class TransactionServiceTest {
         verify(validateIfCommonUser, times(1)).validate(request, walletCommon);
         verify(validateIfTransferHimself, times(1)).validate(request, walletCommon);
         verify(validateIfHasBalance, times(1)).validate(request, walletCommon);
+    }
+
+    @Test
+    void createTransaction_ToTransferWithValidData_NotAuthorizated() {
+        final var request = new TransactionRequest(1L, 2L, BigDecimal.valueOf(1000));
+        final var walletCommom = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.COMUM);
+
+        when(walletService.findById(request.getPayer())).thenReturn(walletCommom);
+        doThrow(new AuthorizationException("Transaction not authorized"))
+                .when(authorizationService).authorizateTransaction();
+
+        assertThatThrownBy(() -> service.createTransferTransaction(request))
+                .isInstanceOf(AuthorizationException.class)
+                .hasMessage("Transaction not authorized");
+
+        verify(walletService, times(1)).findById(request.getPayer());
+        verify(validateIfCommonUser, times(1)).validate(request, walletCommom);
+        verify(validateIfTransferHimself, times(1)).validate(request, walletCommom);
+        verify(validateIfHasBalance, times(1)).validate(request, walletCommom);
+        verify(walletService, times(1)).debitingAndCrediting(request);
+        verify(repository, times(1)).save(transactionCaptor.capture());
+        verify(authorizationService, times(1)).authorizateTransaction();
+
+        final var transaction = transactionCaptor.getValue();
+
+        assertThat(transaction.payer()).isEqualTo(request.getPayer());
+        assertThat(transaction.payee()).isEqualTo(request.getPayee());
+        assertThat(transaction.value()).isEqualTo(request.getValue());
+
     }
 }
