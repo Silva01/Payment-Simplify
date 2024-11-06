@@ -1,5 +1,4 @@
 spring.application.name: simplify-payment-transfer-api
-
 spring:
   datasource:
     url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/simplify?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC}
@@ -13,6 +12,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  sql:
+    init:
+      mode: always
 
 
 spring.kafka:
