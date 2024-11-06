@@ -82,9 +82,9 @@ class TransactionServiceTest {
 
         final var transaction = transactionCaptor.getValue();
 
-        assertThat(transaction.payer()).isEqualTo(request.getPayer());
-        assertThat(transaction.payee()).isEqualTo(request.getPayee());
-        assertThat(transaction.value()).isEqualTo(request.getValue());
+        assertThat(transaction.getPayer()).isEqualTo(request.getPayer());
+        assertThat(transaction.getPayee()).isEqualTo(request.getPayee());
+        assertThat(transaction.getValue()).isEqualTo(request.getValue());
 
     }
 
@@ -165,9 +165,9 @@ class TransactionServiceTest {
 
         final var transaction = transactionCaptor.getValue();
 
-        assertThat(transaction.payer()).isEqualTo(request.getPayer());
-        assertThat(transaction.payee()).isEqualTo(request.getPayee());
-        assertThat(transaction.value()).isEqualTo(request.getValue());
+        assertThat(transaction.getPayer()).isEqualTo(request.getPayer());
+        assertThat(transaction.getPayee()).isEqualTo(request.getPayee());
+        assertThat(transaction.getValue()).isEqualTo(request.getValue());
 
     }
 }

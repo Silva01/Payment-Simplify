@@ -9,7 +9,7 @@ public class ValidateIfTransferHimself implements TransactionValidate {
 
     @Override
     public void validate(TransactionRequest request, Wallet wallet) throws TransactionNotAllowsException {
-        if (wallet.id().equals(request.getPayee())) {
+        if (wallet.getId().equals(request.getPayee())) {
             throw new TransactionNotAllowsException("Payer cannot transfer to himself");
         }
     }

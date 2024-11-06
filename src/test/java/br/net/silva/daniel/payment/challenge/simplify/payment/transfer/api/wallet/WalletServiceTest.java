@@ -43,13 +43,13 @@ class WalletServiceTest implements WalletFactoryMock {
         final var sut = service.findById(1L);
 
         assertThat(sut).isNotNull();
-        assertThat(sut.id()).isEqualTo(1L);
-        assertThat(sut.name()).isEqualTo("Teste");
-        assertThat(sut.cpf()).isEqualTo("12345678900");
-        assertThat(sut.email()).isEqualTo("teste@teste.com");
-        assertThat(sut.password()).isEqualTo("123");
-        assertThat(sut.balance()).isEqualTo(BigDecimal.valueOf(1000));
-        assertThat(sut.type()).isEqualTo(WalletTypeEnum.COMUM);
+        assertThat(sut.getId()).isEqualTo(1L);
+        assertThat(sut.getName()).isEqualTo("Teste");
+        assertThat(sut.getCpf()).isEqualTo("12345678900");
+        assertThat(sut.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(sut.getPassword()).isEqualTo("123");
+        assertThat(sut.getBalance()).isEqualTo(BigDecimal.valueOf(1000));
+        assertThat(sut.getType()).isEqualTo(WalletTypeEnum.COMUM);
 
         verify(repository, times(1)).findById(1L);
     }
@@ -79,12 +79,12 @@ class WalletServiceTest implements WalletFactoryMock {
         final var wallet = walletCaptor.getValue();
 
         assertThat(wallet).isNotNull();
-        assertThat(wallet.id()).isEqualTo(1L);
-        assertThat(wallet.name()).isEqualTo("Teste");
-        assertThat(wallet.cpf()).isEqualTo("12345678900");
-        assertThat(wallet.email()).isEqualTo("teste@teste.com");
-        assertThat(wallet.password()).isEqualTo("123");
-        assertThat(wallet.balance()).isEqualTo(BigDecimal.valueOf(900));
+        assertThat(wallet.getId()).isEqualTo(1L);
+        assertThat(wallet.getName()).isEqualTo("Teste");
+        assertThat(wallet.getCpf()).isEqualTo("12345678900");
+        assertThat(wallet.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(wallet.getPassword()).isEqualTo("123");
+        assertThat(wallet.getBalance()).isEqualTo(BigDecimal.valueOf(900));
     }
 
     @Test
@@ -114,12 +114,12 @@ class WalletServiceTest implements WalletFactoryMock {
         final var wallet = walletCaptor.getValue();
 
         assertThat(wallet).isNotNull();
-        assertThat(wallet.id()).isEqualTo(request.getPayee());
-        assertThat(wallet.name()).isEqualTo("Teste");
-        assertThat(wallet.cpf()).isEqualTo("12345678900");
-        assertThat(wallet.email()).isEqualTo("teste@teste.com");
-        assertThat(wallet.password()).isEqualTo("123");
-        assertThat(wallet.balance()).isEqualTo(BigDecimal.valueOf(1100));
+        assertThat(wallet.getId()).isEqualTo(request.getPayee());
+        assertThat(wallet.getName()).isEqualTo("Teste");
+        assertThat(wallet.getCpf()).isEqualTo("12345678900");
+        assertThat(wallet.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(wallet.getPassword()).isEqualTo("123");
+        assertThat(wallet.getBalance()).isEqualTo(BigDecimal.valueOf(1100));
     }
 
     @Test
@@ -154,21 +154,21 @@ class WalletServiceTest implements WalletFactoryMock {
 
         final var walletDebitSut = walletValues.get(0);
         assertThat(walletDebitSut).isNotNull();
-        assertThat(walletDebitSut.id()).isEqualTo(request.getPayer());
-        assertThat(walletDebitSut.name()).isEqualTo("Teste");
-        assertThat(walletDebitSut.cpf()).isEqualTo("12345678900");
-        assertThat(walletDebitSut.email()).isEqualTo("teste@teste.com");
-        assertThat(walletDebitSut.password()).isEqualTo("123");
-        assertThat(walletDebitSut.balance()).isEqualTo(BigDecimal.valueOf(900));
+        assertThat(walletDebitSut.getId()).isEqualTo(request.getPayer());
+        assertThat(walletDebitSut.getName()).isEqualTo("Teste");
+        assertThat(walletDebitSut.getCpf()).isEqualTo("12345678900");
+        assertThat(walletDebitSut.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(walletDebitSut.getPassword()).isEqualTo("123");
+        assertThat(walletDebitSut.getBalance()).isEqualTo(BigDecimal.valueOf(900));
 
         final var walletCreditSut = walletValues.get(1);
         assertThat(walletCreditSut).isNotNull();
-        assertThat(walletCreditSut.id()).isEqualTo(request.getPayee());
-        assertThat(walletCreditSut.name()).isEqualTo("Teste");
-        assertThat(walletCreditSut.cpf()).isEqualTo("12345678900");
-        assertThat(walletCreditSut.email()).isEqualTo("teste@teste.com");
-        assertThat(walletCreditSut.password()).isEqualTo("123");
-        assertThat(walletCreditSut.balance()).isEqualTo(BigDecimal.valueOf(1100));
+        assertThat(walletCreditSut.getId()).isEqualTo(request.getPayee());
+        assertThat(walletCreditSut.getName()).isEqualTo("Teste");
+        assertThat(walletCreditSut.getCpf()).isEqualTo("12345678900");
+        assertThat(walletCreditSut.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(walletCreditSut.getPassword()).isEqualTo("123");
+        assertThat(walletCreditSut.getBalance()).isEqualTo(BigDecimal.valueOf(1100));
     }
 
     @Test
@@ -202,11 +202,11 @@ class WalletServiceTest implements WalletFactoryMock {
         final var wallet = walletCaptor.getValue();
 
         assertThat(wallet).isNotNull();
-        assertThat(wallet.id()).isEqualTo(1L);
-        assertThat(wallet.name()).isEqualTo("Teste");
-        assertThat(wallet.cpf()).isEqualTo("12345678900");
-        assertThat(wallet.email()).isEqualTo("teste@teste.com");
-        assertThat(wallet.password()).isEqualTo("123");
-        assertThat(wallet.balance()).isEqualTo(BigDecimal.valueOf(900));
+        assertThat(wallet.getId()).isEqualTo(1L);
+        assertThat(wallet.getName()).isEqualTo("Teste");
+        assertThat(wallet.getCpf()).isEqualTo("12345678900");
+        assertThat(wallet.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(wallet.getPassword()).isEqualTo("123");
+        assertThat(wallet.getBalance()).isEqualTo(BigDecimal.valueOf(900));
     }
 }

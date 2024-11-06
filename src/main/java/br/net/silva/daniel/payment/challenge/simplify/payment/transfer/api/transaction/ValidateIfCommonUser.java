@@ -9,7 +9,7 @@ public class ValidateIfCommonUser implements TransactionValidate {
 
     @Override
     public void validate(TransactionRequest request, Wallet wallet) throws TransactionNotAllowsException {
-        if (!WalletTypeEnum.COMUM.getValue().equals(wallet.type().getValue())) {
+        if (!WalletTypeEnum.COMUM.getValue().equals(wallet.getType().getValue())) {
             throw new TransactionNotAllowsException("Payer type is not allowed to make transfers");
         }
     }
