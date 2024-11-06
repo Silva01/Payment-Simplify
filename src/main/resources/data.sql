@@ -1,3 +1,3 @@
-INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (1,'Daniel','77788899900','daniel@teste.com',12345,0.00,1);
-INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (2,'Joao','33344444455','teste@teste.com',44444,3000.00,2);
-INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (3,'Teste','44455566666','teste@pos.com',44444,3000.00,2);
+INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (1,'Daniel','77788899900','daniel@teste.com',12345,5000.00,1);
+INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (2,'Joao','33344444455','teste@teste.com',44444,2000.00,2);
+INSERT INTO simplify.wallets (id, name, cpf, email, password, balance, type) values (3,'Teste','44455566666','teste@pos.com',44444,2000.00,2);
