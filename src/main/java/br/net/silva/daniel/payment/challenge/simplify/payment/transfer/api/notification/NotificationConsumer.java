@@ -1,6 +1,5 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction.Transaction;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public class NotificationConsumer {
         final var body = Optional.ofNullable(response.getBody());
 
         if (body.isEmpty()) {
-            throw new AuthorizationException("Error to authorize transaction");
+            throw new NotificationNotSendException("Error to send notification");
         }
 
         if (response.getStatusCode().isError() || body.get().status().equals("fail")) {
