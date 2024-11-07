@@ -2,6 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.tran
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification.NotificationProducer;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.Wallet;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletService;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletTypeEnum;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,6 +56,9 @@ class TransactionServiceTest {
     @Mock
     private AuthorizationService authorizationService;
 
+    @Mock
+    private NotificationProducer producer;
+
     @Captor
     private ArgumentCaptor<Transaction> transactionCaptor;
 
@@ -69,6 +74,7 @@ class TransactionServiceTest {
         final var walletCommom = new Wallet(1L, "Teste", "12345678900", "teste@teste.com", "123", BigDecimal.valueOf(1000), WalletTypeEnum.COMUM);
 
         when(walletService.findById(request.getPayer())).thenReturn(walletCommom);
+        when(repository.save(any(Transaction.class))).thenReturn(Transaction.of(request));
 
         assertThatCode(() -> service.createTransferTransaction(request))
                 .doesNotThrowAnyException();
@@ -79,6 +85,7 @@ class TransactionServiceTest {
         verify(validateIfHasBalance, times(1)).validate(request, walletCommom);
         verify(walletService, times(1)).debitingAndCrediting(request);
         verify(repository, times(1)).save(transactionCaptor.capture());
+        verify(producer, times(1)).sendNotification(any(Transaction.class));
 
         final var transaction = transactionCaptor.getValue();
 
@@ -103,6 +110,7 @@ class TransactionServiceTest {
 
         verify(walletService, times(1)).findById(request.getPayer());
         verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
+        verify(producer, never()).sendNotification(any(Transaction.class));
     }
 
     @Test
@@ -121,6 +129,7 @@ class TransactionServiceTest {
         verify(walletService, times(1)).findById(request.getPayer());
         verify(validateIfCommonUser, times(1)).validate(request, walletLojista);
         verify(validateIfTransferHimself, times(1)).validate(request, walletLojista);
+        verify(producer, never()).sendNotification(any(Transaction.class));
     }
 
     @Test
@@ -140,6 +149,7 @@ class TransactionServiceTest {
         verify(validateIfCommonUser, times(1)).validate(request, walletCommon);
         verify(validateIfTransferHimself, times(1)).validate(request, walletCommon);
         verify(validateIfHasBalance, times(1)).validate(request, walletCommon);
+        verify(producer, never()).sendNotification(any(Transaction.class));
     }
 
     @Test
@@ -162,6 +172,7 @@ class TransactionServiceTest {
         verify(walletService, times(1)).debitingAndCrediting(request);
         verify(repository, times(1)).save(transactionCaptor.capture());
         verify(authorizationService, times(1)).authorizateTransaction();
+        verify(producer, never()).sendNotification(any(Transaction.class));
 
         final var transaction = transactionCaptor.getValue();
 
