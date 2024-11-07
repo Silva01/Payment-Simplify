@@ -3,6 +3,8 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.auth
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.Optional;
+
 @Service
 public class AuthorizationService {
 
@@ -17,8 +19,13 @@ public class AuthorizationService {
 
     public void authorizateTransaction() {
         final var response = restClient.get().retrieve().toEntity(Authorization.class);
+        final var body = Optional.ofNullable(response.getBody());
 
-        if (response.getStatusCode().isError() || !response.getBody().data().authorization()) {
+        if (body.isEmpty()) {
+            throw new AuthorizationException("Error to authorize transaction");
+        }
+
+        if (response.getStatusCode().isError() || !body.get().data().authorization()) {
             throw new AuthorizationException("Transaction not authorized");
         }
     }

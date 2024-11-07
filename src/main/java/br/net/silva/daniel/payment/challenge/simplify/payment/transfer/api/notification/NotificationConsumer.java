@@ -1,9 +1,12 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification;
 
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction.Transaction;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.Optional;
 
 @Service
 public class NotificationConsumer {
@@ -20,8 +23,13 @@ public class NotificationConsumer {
     public void send(Transaction transaction) {
 
         final var response = restClient.get().retrieve().toEntity(Notification.class);
+        final var body = Optional.ofNullable(response.getBody());
 
-        if (response.getStatusCode().isError() || response.getBody().status().equals("fail")) {
+        if (body.isEmpty()) {
+            throw new AuthorizationException("Error to authorize transaction");
+        }
+
+        if (response.getStatusCode().isError() || body.get().status().equals("fail")) {
             throw new NotificationNotSendException("Error to send notification");
         }
     }
