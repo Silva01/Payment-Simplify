@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class KafkaProducer implements NotificationProducer {
+public class NotificationKafkaProducer implements NotificationProducer {
 
     private final KafkaTemplate<String, Transaction> kafkaTemplate;
 
