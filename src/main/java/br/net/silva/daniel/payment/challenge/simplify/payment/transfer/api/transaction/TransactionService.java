@@ -1,6 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.Authorizator;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification.NotificationProducer;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletService;
 import jakarta.transaction.Transactional;
@@ -13,26 +13,26 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionService {
 
-    private final WalletService walletService;
-    private final List<TransactionValidate> transactionValidates;
+    private final WalletService walletServiceImpl;
     private final TransactionRepository repository;
-    private final AuthorizationService authorizationService;
+    private final Authorizator authorizator;
     private final NotificationProducer producer;
+    private final List<TransactionValidate> transactionValidates;
 
     @Transactional
     public void createTransferTransaction(TransactionRequest request) throws TransactionNotAllowsException {
         // 1 - validar a transação
-        final var payerWallet = walletService.findById(request.getPayer());
+        final var payerWallet = walletServiceImpl.findById(request.getPayer());
         transactionValidates.forEach(validate -> validate.validate(request, payerWallet));
 
         // 2 - Debitar o valor da carteira do pagador
-        walletService.debitingAndCrediting(request);
+        walletServiceImpl.debitingAndCrediting(request);
 
         // 4 - Salvar a transação
         final var newTransaction = repository.save(Transaction.of(request));
 
         // 5 - Acessar servico autorizador
-        authorizationService.authorizateTransaction();
+        authorizator.authorizeTransaction();
 
         // 6 - Enviar notificação para o recebedor
         producer.sendNotification(newTransaction);
