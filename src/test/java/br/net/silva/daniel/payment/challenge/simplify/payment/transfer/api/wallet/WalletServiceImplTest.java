@@ -25,10 +25,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class WalletServiceTest implements WalletFactoryMock {
+class WalletServiceImplTest implements WalletFactoryMock {
 
     @InjectMocks
-    private WalletService service;
+    private WalletServiceImpl service;
 
     @Mock
     private WalletRepository repository;

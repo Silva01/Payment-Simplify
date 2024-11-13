@@ -13,20 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionService {
 
-    private final WalletService walletService;
+    private final WalletService walletServiceImpl;
     private final List<TransactionValidate> transactionValidates;
     private final TransactionRepository repository;
-    private final AuthorizationService authorizationService;
-    private final NotificationProducer producer;
+    private final AuthorizationService authorizationService; //TODO: Está ferindo o DIP
+    private final NotificationProducer producer; // TODO: Está ferindo o DIP
 
     @Transactional
     public void createTransferTransaction(TransactionRequest request) throws TransactionNotAllowsException {
         // 1 - validar a transação
-        final var payerWallet = walletService.findById(request.getPayer());
+        final var payerWallet = walletServiceImpl.findById(request.getPayer());
         transactionValidates.forEach(validate -> validate.validate(request, payerWallet));
 
         // 2 - Debitar o valor da carteira do pagador
-        walletService.debitingAndCrediting(request);
+        walletServiceImpl.debitingAndCrediting(request);
 
         // 4 - Salvar a transação
         final var newTransaction = repository.save(Transaction.of(request));
