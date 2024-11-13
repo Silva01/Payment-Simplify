@@ -2,7 +2,7 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.tran
 
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationException;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification.NotificationProducer;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification.KafkaProducer;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.Wallet;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletServiceImpl;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletTypeEnum;
@@ -57,7 +57,7 @@ class TransactionServiceTest {
     private AuthorizationService authorizationService;
 
     @Mock
-    private NotificationProducer producer;
+    private KafkaProducer producer;
 
     @Captor
     private ArgumentCaptor<Transaction> transactionCaptor;

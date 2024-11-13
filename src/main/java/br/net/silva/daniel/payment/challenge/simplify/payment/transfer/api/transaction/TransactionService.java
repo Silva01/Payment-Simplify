@@ -14,10 +14,10 @@ import java.util.List;
 public class TransactionService {
 
     private final WalletService walletServiceImpl;
-    private final List<TransactionValidate> transactionValidates;
     private final TransactionRepository repository;
     private final Authorizator authorizator;
-    private final NotificationProducer producer; // TODO: Está ferindo o DIP
+    private final NotificationProducer producer;
+    private final List<TransactionValidate> transactionValidates;
 
     @Transactional
     public void createTransferTransaction(TransactionRequest request) throws TransactionNotAllowsException {
