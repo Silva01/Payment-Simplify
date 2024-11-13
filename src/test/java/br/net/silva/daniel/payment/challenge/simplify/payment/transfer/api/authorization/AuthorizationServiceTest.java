@@ -31,7 +31,7 @@ class AuthorizationServiceTest {
     }
 
     @Test
-    void authorizateTransaction_WithSuccess() {
+    void authorizeTransaction_WithSuccess() {
         final var authorizationMock = new Authorization("success", new DataAuthorization(true));
 
         when(restBuilder.build().get()).thenReturn(mock(RestClient.RequestHeadersUriSpec.class));
@@ -39,12 +39,12 @@ class AuthorizationServiceTest {
         when(restBuilder.build().get().retrieve().toEntity(Authorization.class))
                 .thenReturn(ResponseEntity.ok(authorizationMock));
 
-        assertThatCode(() -> authorizationService.authorizateTransaction())
+        assertThatCode(() -> authorizationService.authorizeTransaction())
                 .doesNotThrowAnyException();
     }
 
     @Test
-    void authorizateTransaction_WithNotAuthorizated() {
+    void authorizeTransaction_WithNotAuthorizated() {
         final var authorizationMock = new Authorization("fail", new DataAuthorization(false));
 
         when(restBuilder.build().get()).thenReturn(mock(RestClient.RequestHeadersUriSpec.class));
@@ -52,7 +52,7 @@ class AuthorizationServiceTest {
         when(restBuilder.build().get().retrieve().toEntity(Authorization.class))
                 .thenReturn(ResponseEntity.ok(authorizationMock));
 
-        assertThatThrownBy(() -> authorizationService.authorizateTransaction())
+        assertThatThrownBy(() -> authorizationService.authorizeTransaction())
                 .isInstanceOf(AuthorizationException.class)
                 .hasMessage("Transaction not authorized");
     }

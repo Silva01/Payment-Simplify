@@ -1,6 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction;
 
-import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.AuthorizationService;
+import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.authorization.Authorizator;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.notification.NotificationProducer;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet.WalletService;
 import jakarta.transaction.Transactional;
@@ -16,7 +16,7 @@ public class TransactionService {
     private final WalletService walletServiceImpl;
     private final List<TransactionValidate> transactionValidates;
     private final TransactionRepository repository;
-    private final AuthorizationService authorizationService; //TODO: Está ferindo o DIP
+    private final Authorizator authorizator;
     private final NotificationProducer producer; // TODO: Está ferindo o DIP
 
     @Transactional
@@ -32,7 +32,7 @@ public class TransactionService {
         final var newTransaction = repository.save(Transaction.of(request));
 
         // 5 - Acessar servico autorizador
-        authorizationService.authorizateTransaction();
+        authorizator.authorizeTransaction();
 
         // 6 - Enviar notificação para o recebedor
         producer.sendNotification(newTransaction);

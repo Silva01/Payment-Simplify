@@ -6,7 +6,7 @@ import org.springframework.web.client.RestClient;
 import java.util.Optional;
 
 @Service
-public class AuthorizationService {
+public class AuthorizationService implements Authorizator {
 
     public final RestClient restClient;
 
@@ -17,7 +17,8 @@ public class AuthorizationService {
     }
 
 
-    public void authorizateTransaction() {
+    @Override
+    public void authorizeTransaction() {
         final var response = restClient.get().retrieve().toEntity(Authorization.class);
         final var body = Optional.ofNullable(response.getBody());
 

@@ -159,7 +159,7 @@ class TransactionServiceTest {
 
         when(walletServiceImpl.findById(request.getPayer())).thenReturn(walletCommom);
         doThrow(new AuthorizationException("Transaction not authorized"))
-                .when(authorizationService).authorizateTransaction();
+                .when(authorizationService).authorizeTransaction();
 
         assertThatThrownBy(() -> service.createTransferTransaction(request))
                 .isInstanceOf(AuthorizationException.class)
@@ -171,7 +171,7 @@ class TransactionServiceTest {
         verify(validateIfHasBalance, times(1)).validate(request, walletCommom);
         verify(walletServiceImpl, times(1)).debitingAndCrediting(request);
         verify(repository, times(1)).save(transactionCaptor.capture());
-        verify(authorizationService, times(1)).authorizateTransaction();
+        verify(authorizationService, times(1)).authorizeTransaction();
         verify(producer, never()).sendNotification(any(Transaction.class));
 
         final var transaction = transactionCaptor.getValue();
