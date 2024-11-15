@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
-    private final WalletRepository walletRepository;
+    final WalletRepository walletRepository;
 
     @Override
     public Wallet findById(Long id) {

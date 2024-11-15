@@ -3,7 +3,6 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wall
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.WalletFactoryMock;
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction.TransactionRequest;
 import org.mockito.ArgumentCaptor;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -21,21 +20,19 @@ import static org.mockito.Mockito.when;
 public class WalletServiceDouble extends WalletServiceImpl implements WalletFactoryMock {
 
     private final ArgumentCaptor<Wallet> walletCaptor;
-    private final WalletRepository repository;
 
     public WalletServiceDouble() {
         super(mock(WalletRepository.class));
         this.walletCaptor = ArgumentCaptor.captor();
-        repository = ((WalletRepository) ReflectionTestUtils.getField(this, "walletRepository"));
     }
 
     public void verifyFindByIdProcess(Long id) {
-        verify(repository, times(1)).findById(id);
+        verify(walletRepository, times(1)).findById(id);
     }
 
     public void verifyDebitProcess(TransactionRequest request) {
-        verify(repository, times(1)).findById(request.getPayer());
-        verify(repository, times(1)).save(walletCaptor.capture());
+        verify(walletRepository, times(1)).findById(request.getPayer());
+        verify(walletRepository, times(1)).save(walletCaptor.capture());
 
         final var wallet = walletCaptor.getValue();
 
@@ -49,19 +46,19 @@ public class WalletServiceDouble extends WalletServiceImpl implements WalletFact
 
     @Override
     public Wallet findById(Long id) {
-        when(repository.findById(id)).thenReturn(Optional.of(createCommonWallet(1L)));
+        when(walletRepository.findById(id)).thenReturn(Optional.of(createCommonWallet(id)));
         return super.findById(id);
     }
 
     @Override
     public void debit(TransactionRequest request) {
-        when(repository.findById(request.getPayer())).thenReturn(Optional.of(createCommonWallet(request.getPayer())));
+        when(walletRepository.findById(request.getPayer())).thenReturn(Optional.of(createCommonWallet(request.getPayer())));
         super.debit(request);
     }
 
     @Override
     public void credit(TransactionRequest request) {
-        when(repository.findById(request.getPayee())).thenReturn(Optional.of(createCommonWallet(request.getPayee())));
+        when(walletRepository.findById(request.getPayee())).thenReturn(Optional.of(createCommonWallet(request.getPayee())));
         super.credit(request);
     }
 }

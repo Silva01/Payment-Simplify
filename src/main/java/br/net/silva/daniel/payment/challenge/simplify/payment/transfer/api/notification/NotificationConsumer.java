@@ -11,7 +11,7 @@ import java.util.Optional;
 public class NotificationConsumer {
 
     private static final String NOTIFY_SERVICE_URL = "https://util.devi.tools/api/v1/notify";
-    private final RestClient restClient;
+    final RestClient restClient;
 
     public NotificationConsumer(RestClient.Builder restBuilder) {
         this.restClient = restBuilder
