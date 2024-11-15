@@ -8,11 +8,12 @@ import java.util.Optional;
 @Service
 public class AuthorizationService implements Authorizator {
 
+    private static final String AUTHORIZE_URL = "https://util.devi.tools/api/v2/authorize";
     public final RestClient restClient;
 
     public AuthorizationService(RestClient.Builder restBuilder) {
         this.restClient = restBuilder
-                .baseUrl("https://util.devi.tools/api/v2/authorize")
+                .baseUrl(AUTHORIZE_URL)
                 .build();
     }
 
