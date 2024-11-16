@@ -4,6 +4,7 @@ import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.Walle
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction.TransactionRequest;
 import org.mockito.ArgumentCaptor;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,22 +27,30 @@ public class WalletServiceDouble extends WalletServiceImpl implements WalletFact
         this.walletCaptor = ArgumentCaptor.captor();
     }
 
-    public void verifyFindByIdProcess(Long id) {
-        verify(walletRepository, times(1)).findById(id);
+    public void verifyFindByIdProcess(Long id, int time) {
+        verify(walletRepository, times(time)).findById(id);
     }
 
-    public void verifyDebitProcess(TransactionRequest request) {
-        verify(walletRepository, times(1)).findById(request.getPayer());
-        verify(walletRepository, times(1)).save(walletCaptor.capture());
+    public void verifySaveDebitProcess() {
+        verify(walletRepository, times(2)).save(walletCaptor.capture());
 
-        final var wallet = walletCaptor.getValue();
+        final var walletCommonUser = walletCaptor.getAllValues().get(0);
 
-        assertThat(wallet.getId()).isNotNull();
-        assertThat(wallet.getName()).isEqualTo("Teste");
-        assertThat(wallet.getCpf()).isEqualTo("12345678900");
-        assertThat(wallet.getEmail()).isEqualTo("teste@teste.com");
-        assertThat(wallet.getPassword()).isEqualTo("123");
-        assertThat(wallet.getBalance()).isEqualTo(1800);
+        assertThat(walletCommonUser.getId()).isNotNull();
+        assertThat(walletCommonUser.getName()).isEqualTo("Teste");
+        assertThat(walletCommonUser.getCpf()).isEqualTo("12345678900");
+        assertThat(walletCommonUser.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(walletCommonUser.getPassword()).isEqualTo("123");
+        assertThat(walletCommonUser.getBalance()).isEqualTo(BigDecimal.valueOf(800));
+
+        final var walletLojista = walletCaptor.getAllValues().get(1);
+
+        assertThat(walletLojista.getId()).isNotNull();
+        assertThat(walletLojista.getName()).isEqualTo("Teste");
+        assertThat(walletLojista.getCpf()).isEqualTo("12345678900");
+        assertThat(walletLojista.getEmail()).isEqualTo("teste@teste.com");
+        assertThat(walletLojista.getPassword()).isEqualTo("123");
+        assertThat(walletLojista.getBalance()).isEqualTo(BigDecimal.valueOf(1200));
     }
 
     @Override
