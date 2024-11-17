@@ -3,26 +3,22 @@ package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.noti
 import br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.transaction.Transaction;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.Optional;
 
 @Service
 public class NotificationConsumer {
 
-    private static final String NOTIFY_SERVICE_URL = "https://util.devi.tools/api/v1/notify";
-    final RestClient restClient;
+    final NotificationRestClient notificationRestClient;
 
-    public NotificationConsumer(RestClient.Builder restBuilder) {
-        this.restClient = restBuilder
-                .baseUrl(NOTIFY_SERVICE_URL)
-                .build();
+    public NotificationConsumer(NotificationRestClient notificationRestClient) {
+        this.notificationRestClient = notificationRestClient;
     }
 
     @KafkaListener(topics = "simplify.payment.transaction.notification", groupId = "simplify-payment-challenger")
     public void send(Transaction transaction) {
 
-        final var response = restClient.get().retrieve().toEntity(Notification.class);
+        final var response = notificationRestClient.exec().toEntity(Notification.class);
         final var body = Optional.ofNullable(response.getBody());
 
         if (body.isEmpty()) {

@@ -10,7 +10,6 @@ import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,23 +19,19 @@ class AuthorizationServiceTest {
     private AuthorizationService authorizationService;
 
     @Mock
-    private RestClient.Builder restBuilder;
+    private AuthorizationRestClient authorizationRestClient;
 
     @BeforeEach
     void setUp() {
-        when(restBuilder.baseUrl(anyString())).thenReturn(restBuilder);
-        when(restBuilder.build()).thenReturn(mock(RestClient.class));
-
-        this.authorizationService = new AuthorizationService(restBuilder);
+        this.authorizationService = new AuthorizationService(authorizationRestClient);
     }
 
     @Test
     void authorizeTransaction_WithSuccess() {
         final var authorizationMock = new Authorization("success", new DataAuthorization(true));
 
-        when(restBuilder.build().get()).thenReturn(mock(RestClient.RequestHeadersUriSpec.class));
-        when(restBuilder.build().get().retrieve()).thenReturn(mock(RestClient.ResponseSpec.class));
-        when(restBuilder.build().get().retrieve().toEntity(Authorization.class))
+        when(authorizationRestClient.exec()).thenReturn(mock(RestClient.ResponseSpec.class));
+        when(authorizationRestClient.exec().toEntity(Authorization.class))
                 .thenReturn(ResponseEntity.ok(authorizationMock));
 
         assertThatCode(() -> authorizationService.authorizeTransaction())
@@ -47,9 +42,8 @@ class AuthorizationServiceTest {
     void authorizeTransaction_WithNotAuthorizated() {
         final var authorizationMock = new Authorization("fail", new DataAuthorization(false));
 
-        when(restBuilder.build().get()).thenReturn(mock(RestClient.RequestHeadersUriSpec.class));
-        when(restBuilder.build().get().retrieve()).thenReturn(mock(RestClient.ResponseSpec.class));
-        when(restBuilder.build().get().retrieve().toEntity(Authorization.class))
+        when(authorizationRestClient.exec()).thenReturn(mock(RestClient.ResponseSpec.class));
+        when(authorizationRestClient.exec().toEntity(Authorization.class))
                 .thenReturn(ResponseEntity.ok(authorizationMock));
 
         assertThatThrownBy(() -> authorizationService.authorizeTransaction())
