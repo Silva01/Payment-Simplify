@@ -9,7 +9,7 @@ public class AuthorizationService implements Authorizator {
 
     final AuthorizationRestClient authorizationRestClient;
 
-    public AuthorizationService(AuthorizationRestClient authorizationRestClient) {
+    public AuthorizationService(@AuthorizationRestClientConfig AuthorizationRestClient authorizationRestClient) {
         this.authorizationRestClient = authorizationRestClient;
     }
 

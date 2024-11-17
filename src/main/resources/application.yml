@@ -24,3 +24,8 @@ spring.kafka:
   consumer:
     value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties.spring.json.trusted.packages: '*'
+
+
+springdoc:
+  api-docs:
+    path: /api-docs

@@ -11,7 +11,7 @@ public class NotificationConsumer {
 
     final NotificationRestClient notificationRestClient;
 
-    public NotificationConsumer(NotificationRestClient notificationRestClient) {
+    public NotificationConsumer(@NotificationRestClientConfig NotificationRestClient notificationRestClient) {
         this.notificationRestClient = notificationRestClient;
     }
 
