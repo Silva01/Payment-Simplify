@@ -1,5 +1,6 @@
 package br.net.silva.daniel.payment.challenge.simplify.payment.transfer.api.wallet;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,9 @@ public class Wallet {
 
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private String name;
+    @Column(unique = true)
     private String cpf;
+    @Column(unique = true)
     private String email;
     private String password;
     private BigDecimal balance;
